@@ -7,6 +7,7 @@ import {
   Users,
 } from 'lucide-react'
 import Image from 'next/image'
+import { getBlur } from '../../../lib/utils'
 
 export default function ClientServicesPage() {
   return (
@@ -40,6 +41,8 @@ export default function ClientServicesPage() {
                   alt="Team hands stacked together"
                   fill
                   className="object-cover"
+                  placeholder="blur"
+                  blurDataURL={getBlur()}
                 />
               </div>
               <div>
@@ -84,6 +87,8 @@ export default function ClientServicesPage() {
                   alt="Business team collaborating around a laptop"
                   fill
                   className="object-cover"
+                  placeholder="blur"
+                  blurDataURL={getBlur()}
                 />
               </div>
             </div>

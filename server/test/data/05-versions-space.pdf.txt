@@ -1,0 +1,36 @@
+
+
+Subject
+Proposal for Enhancing AI/ML and Cybersecurity Education in the MIST CSE Program
+1Early Integration of AI/ML/Cybersecurity in Cur-
+riculum
+•Current  Concern:  AI/ML/Cybersecurity  domains  are  introduced  late  (end  of
+Level 4), limiting deep learning and real-world application.
+•Proposed Change:  Beginning these subjects fromLevel 3, enabling:
+–In-depth project-based learning
+–Better preparation for internships and jobs
+–Integration of AI into final-year projects
+2    .  Launch of AI and Cybersecurity Research Clubs
+•Establishstudent-led research groupsunder faculty supervision.
+•Hostseminars, hackathons, and inter-university challenges.
+•Facilitate participation ininternational AI/Cybersecurity competitions(e.g.,
+DEFCON, Kaggle, AI Blitz).
+3Affordable or no barrier Access to Cyberrange
+•Problem:  Lack of access to cyber range and costly cybersecurity courses.
+•Recommendations:
+–Implement ascholarship or subsidy modelbased on merit and interest for
+the cyberrange courses conducted in mist, so students can easily join them
+–Increasing the courses and activities in the cyberrange
+–Continue the initiative planned byBrig Gen Touhid Sirto make cyberse-
+curity education accessible, affordable and keeping no fees for students for the
+cyberrange courses
+1
+
+4Extracurricular Courses and Workshops
+•If  immediate  curriculum  changes  are  impractical,  initiate  extracurricularwork-
+shops, bootcamps, and certifications.
+•Collaborate  withlocal  AI  startups  and  research  labs(e.g.,  BRAC  AI  Lab,
+BJIT, Datasoft).
+•Utilizeopen-source platformslike Google Colab, FastAI, and HuggingFace for
+practical learning.
+2

@@ -107,7 +107,7 @@ export default function Home() {
               alt="Logo"
               width={1000}
               height={1000}
-              className="rounded-sm w-full h-auto hover:shadow-lg filter transition-all duration-500 ease-in-out hover:contrast-125"
+              className="rounded-sm w-96 h-auto hover:shadow-lg filter transition-all duration-500 ease-in-out hover:contrast-125"
               priority
             />
           </div>
@@ -121,7 +121,7 @@ export default function Home() {
                 alt="Logo"
                 width={1000}
                 height={1000}
-                className="rounded-sm w-full h-auto hover:shadow-lg filter transition-all duration-500 ease-in-out hover:contrast-125"
+                className="rounded-sm hover:shadow-lg filter transition-all duration-500 ease-in-out hover:contrast-125 w-96 h-auto"
                 priority
               />
             </div>

@@ -19,8 +19,10 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getAllJobs } from '../../lib/job'
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const openPositions = await getAllJobs()
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-1">
@@ -107,33 +109,6 @@ export default function CareersPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {(() => {
-                const openPositions = [
-                  {
-                    id: 'senior-react-developer',
-                    title: 'Senior React Developer',
-                    location: 'Remote',
-                    workType: 'Full-time',
-                    description:
-                      'Join our frontend team to build scalable and performant web applications using React and modern technologies.',
-                  },
-                  {
-                    id: 'ux-designer',
-                    title: 'UX Designer',
-                    location: 'San Francisco',
-                    workType: 'Full-time',
-                    description:
-                      'Create beautiful and intuitive user experiences for our enterprise software solutions.',
-                  },
-                  {
-                    id: 'devops-engineer',
-                    title: 'DevOps Engineer',
-                    location: 'Remote',
-                    workType: 'Full-time',
-                    description:
-                      'Help us build and maintain robust infrastructure and deployment pipelines.',
-                  },
-                ]
-
                 return openPositions.map((job) => (
                   <div
                     key={job.id}
@@ -147,16 +122,22 @@ export default function CareersPage() {
                       <span className="text-sm">{job.location}</span>
                       <span className="mx-2">•</span>
                       <Clock className="h-4 w-4 mr-1" />
-                      <span className="text-sm">{job.workType}</span>
+                      <span className="text-sm">{job.workyype}</span>
                     </div>
                     <p className="text-gray-600 my-4">{job.description}</p>
                     <div className="flex gap-3 mt-6">
                       <Link href={`/careers/${job.id}`}>
                         <Button variant="outline">View Details</Button>
                       </Link>
-                      <Button className="bg-green-600 hover:bg-green-700">
-                        Apply Now
-                      </Button>
+                      <Link
+                        href={`/careers/apply?job=${encodeURIComponent(
+                          job.id,
+                        )}&name=${job.title}`}
+                      >
+                        <Button className="bg-green-600 hover:bg-green-700">
+                          Apply Now
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 ))

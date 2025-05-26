@@ -2,7 +2,7 @@
 
 import type React from 'react'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -15,37 +15,30 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { AlertCircle, ArrowLeft, CheckCircle, File, Upload } from 'lucide-react'
+import { ArrowLeft, File, Upload } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useActionState, useCallback, useRef, useState } from 'react'
+import { jobApplicationForm } from '../../../lib/job'
+
+const initialState = {
+  message: '',
+  success: false,
+}
 
 export default function ApplyPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const jobTitle = searchParams.get('job') || 'this position'
-
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formStatus, setFormStatus] = useState<null | 'success' | 'error'>(null)
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    coverLetter: '',
-  })
+  const jobTitle = searchParams.get('name') || 'this position'
+  const jobId = searchParams.get('job')
 
   const [resume, setResume] = useState<File | null>(null)
   const [resumeError, setResumeError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null
+
+    console.log('file', file)
 
     if (!file) {
       setResume(null)
@@ -70,49 +63,18 @@ export default function ApplyPage() {
     setResume(file)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const [state, formAction, pending] = useActionState(
+    jobApplicationForm,
+    initialState,
+  )
 
-    // Validate resume
-    if (!resume) {
-      setResumeError('Please upload your resume')
-      return
-    }
-
-    setIsSubmitting(true)
-    setFormStatus(null)
-
-    try {
-      // Here you would typically send the data to your API
-      // This would include form data and the resume file
-      console.log('Submitting application:', { ...formData, resume })
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // Show success message
-      setFormStatus('success')
-
-      // Reset form after successful submission
-      setTimeout(() => {
-        setFormData({
-          fullName: '',
-          email: '',
-          phone: '',
-          coverLetter: '',
-        })
-        setResume(null)
-        if (fileInputRef.current) {
-          fileInputRef.current.value = ''
-        }
-      }, 3000)
-    } catch (error) {
-      console.error('Error submitting application:', error)
-      setFormStatus('error')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+  const handleSubmit = useCallback(
+    (formData: FormData) => {
+      formData.append('job_id', jobId ?? '')
+      formAction(formData)
+    },
+    [jobId, formAction],
+  )
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -134,55 +96,27 @@ export default function ApplyPage() {
             unless marked optional.
           </p>
 
-          {formStatus === 'success' && (
-            <Alert className="mb-6 bg-green-50 border-green-200">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-              <AlertTitle className="text-green-800">
-                Application Submitted!
-              </AlertTitle>
-              <AlertDescription className="text-green-700">
-                Thank you for your application. We will review it and get back
-                to you soon.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {formStatus === 'error' && (
-            <Alert className="mb-6 bg-red-50 border-red-200">
-              <AlertCircle className="h-4 w-4 text-red-600" />
-              <AlertTitle className="text-red-800">
-                Submission Failed
-              </AlertTitle>
-              <AlertDescription className="text-red-700">
-                There was an error submitting your application. Please try again
-                later.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Application Form</CardTitle>
-              <CardDescription>
-                Tell us about yourself and why you're interested in joining our
-                team.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form
-                onSubmit={handleSubmit}
-                className="space-y-6"
-              >
+          <form
+            action={handleSubmit}
+            className="space-y-6"
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Application Form</CardTitle>
+                <CardDescription>
+                  Tell us about yourself and why you{"'"}re interested in
+                  joining our team.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
                 {/* Personal Information */}
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
+                    <Label htmlFor="name">Full Name</Label>
                     <Input
-                      id="fullName"
-                      name="fullName"
+                      id="name"
+                      name="name"
                       placeholder="John Doe"
-                      value={formData.fullName}
-                      onChange={handleChange}
                       required
                     />
                   </div>
@@ -195,8 +129,6 @@ export default function ApplyPage() {
                         name="email"
                         type="email"
                         placeholder="you@example.com"
-                        value={formData.email}
-                        onChange={handleChange}
                         required
                       />
                     </div>
@@ -208,8 +140,6 @@ export default function ApplyPage() {
                         name="phone"
                         type="tel"
                         placeholder="+1 (555) 123-4567"
-                        value={formData.phone}
-                        onChange={handleChange}
                         required
                       />
                     </div>
@@ -217,13 +147,11 @@ export default function ApplyPage() {
 
                   {/* Cover Letter */}
                   <div className="space-y-2">
-                    <Label htmlFor="coverLetter">Cover Letter</Label>
+                    <Label htmlFor="cover">Cover Letter</Label>
                     <Textarea
-                      id="coverLetter"
-                      name="coverLetter"
+                      id="cover"
+                      name="cover"
                       placeholder="Tell us why you're interested in this position and what makes you a great fit..."
-                      value={formData.coverLetter}
-                      onChange={handleChange}
                       rows={6}
                       required
                     />
@@ -277,51 +205,57 @@ export default function ApplyPage() {
                       <p className="text-sm text-red-600 mt-1">{resumeError}</p>
                     )}
                   </div>
+
+                  {state?.message && (
+                    <Alert variant={state?.success ? 'default' : 'destructive'}>
+                      <AlertDescription>{state?.message}</AlertDescription>
+                    </Alert>
+                  )}
                 </div>
-              </form>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button
-                variant="outline"
-                onClick={() => router.back()}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="bg-green-600 hover:bg-green-700"
-                onClick={handleSubmit}
-                disabled={isSubmitting || !resume || formStatus === 'success'}
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Submitting...
-                  </div>
-                ) : (
-                  'Submit Application'
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
+              </CardContent>
+              <CardFooter className="flex justify-between">
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => router.back()}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="bg-green-600 hover:bg-green-700"
+                  disabled={pending || !resume}
+                >
+                  {pending ? (
+                    <div className="flex items-center">
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Submitting...
+                    </div>
+                  ) : (
+                    'Submit Application'
+                  )}
+                </Button>
+              </CardFooter>
+            </Card>
+          </form>
         </div>
       </main>
     </div>

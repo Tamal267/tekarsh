@@ -1,5 +1,6 @@
 import { BarChart, Code, Lock, Settings, Shield, Users } from 'lucide-react'
 import Image from 'next/image'
+import { getBlur } from '../../../lib/utils'
 
 export default function QualityAssurancePage() {
   return (
@@ -33,6 +34,8 @@ export default function QualityAssurancePage() {
                   alt="Team collaborating on requirements gathering"
                   fill
                   className="object-cover"
+                  placeholder="blur"
+                  blurDataURL={getBlur()}
                 />
               </div>
               <div>
@@ -81,6 +84,8 @@ export default function QualityAssurancePage() {
                   alt="Sticky notes on a planning board"
                   fill
                   className="object-cover"
+                  placeholder="blur"
+                  blurDataURL={getBlur()}
                 />
               </div>
             </div>

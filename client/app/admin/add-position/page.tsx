@@ -1,7 +1,5 @@
 'use client'
 
-import type React from 'react'
-
 import MarkdownEditor from '@/components/markdown-editor'
 import { MarkdownPreviewer } from '@/components/markdown-previewer'
 import { Button } from '@/components/ui/button'
@@ -26,66 +24,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { ArrowLeft, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useActionState, useCallback, useState } from 'react'
+import { Alert, AlertDescription } from '../../../components/ui/alert'
+import { addPosition } from '../../../lib/admin'
+
+const initialState = {
+  message: '',
+  success: false,
+}
 
 export default function AddPositionPage() {
   const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [description, setDescription] = useState('')
   const [markdownContent, setMarkdownContent] = useState('')
-  const [formData, setFormData] = useState({
-    title: '',
-    location: '',
-    workType: '',
-    description: '',
-    fullDetails: '',
-  })
+  const [state, formAction, pending] = useActionState(addPosition, initialState)
 
-  // Update formData when markdownContent changes
-  useEffect(() => {
-    setFormData((prev) => ({ ...prev, fullDetails: markdownContent }))
-  }, [markdownContent])
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    try {
-      // Here you would typically send the data to your API
-      console.log('Submitting position data:', formData)
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Show success message or redirect
-      alert('Position added successfully!')
-
-      // Reset form
-      setFormData({
-        title: '',
-        location: '',
-        workType: '',
-        description: '',
-        fullDetails: '',
-      })
-      setMarkdownContent('')
-    } catch (error) {
-      console.error('Error adding position:', error)
-      alert('Failed to add position. Please try again.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+  const handleSubmit = useCallback(
+    (formData: FormData) => {
+      formData.append('description', description)
+      formData.append('details', markdownContent)
+      formAction(formData)
+    },
+    [description, markdownContent, formAction],
+  )
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -107,19 +69,19 @@ export default function AddPositionPage() {
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Position Details</CardTitle>
-            <CardDescription>
-              Enter the information for the new open position. All fields are
-              required.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-6"
-            >
+        <form
+          action={handleSubmit}
+          className="space-y-6"
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle>Position Details</CardTitle>
+              <CardDescription>
+                Enter the information for the new open position. All fields are
+                required.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
               <div className="space-y-4">
                 {/* Position Title */}
                 <div className="space-y-2">
@@ -128,8 +90,6 @@ export default function AddPositionPage() {
                     id="title"
                     name="title"
                     placeholder="e.g. Senior React Developer"
-                    value={formData.title}
-                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -143,8 +103,6 @@ export default function AddPositionPage() {
                       id="location"
                       name="location"
                       placeholder="e.g. Remote, New York, San Francisco"
-                      value={formData.location}
-                      onChange={handleChange}
                       required
                     />
                   </div>
@@ -153,10 +111,7 @@ export default function AddPositionPage() {
                   <div className="space-y-2">
                     <Label htmlFor="workType">Work Type</Label>
                     <Select
-                      value={formData.workType}
-                      onValueChange={(value) =>
-                        handleSelectChange('workType', value)
-                      }
+                      name="worktype"
                       required
                     >
                       <SelectTrigger id="workType">
@@ -171,22 +126,42 @@ export default function AddPositionPage() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Department */}
+                  <div className="space-y-2">
+                    <Label htmlFor="department">Department</Label>
+                    <Input
+                      id="department"
+                      name="department"
+                      placeholder="e.g. Engineering"
+                      required
+                    />
+                  </div>
+
+                  {/* Salary */}
+                  <div className="space-y-2">
+                    <Label htmlFor="salary">Salary</Label>
+                    <Input
+                      id="salary"
+                      name="salary"
+                      placeholder="e.g. $10000 - $20000"
+                      required
+                    />
+                  </div>
                 </div>
 
                 {/* Brief Description */}
                 <div className="space-y-2">
                   <Label htmlFor="description">Brief Description</Label>
                   <Textarea
-                    id="description"
-                    name="description"
                     placeholder="A short description that will appear in the job listing card (100-150 characters)"
-                    value={formData.description}
-                    onChange={handleChange}
                     rows={3}
                     required
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                   />
                   <p className="text-sm text-gray-500">
-                    {formData.description.length}/150 characters
+                    {description.length}/150 characters
                   </p>
                 </div>
 
@@ -226,31 +201,37 @@ export default function AddPositionPage() {
                     more.
                   </p>
                 </div>
+                {state?.message && (
+                  <Alert variant={state?.success ? 'default' : 'destructive'}>
+                    <AlertDescription>{state?.message}</AlertDescription>
+                  </Alert>
+                )}
               </div>
-            </form>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button
-              variant="outline"
-              onClick={() => router.back()}
-            >
-              Cancel
-            </Button>
-            <Button
-              className="bg-green-600 hover:bg-green-700"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>Processing...</>
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" /> Add Position
-                </>
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
+            </CardContent>
+
+            <CardFooter className="flex justify-between">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => router.back()}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-green-600 hover:bg-green-700"
+                disabled={pending}
+              >
+                {pending ? (
+                  <>Processing...</>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" /> Add Position
+                  </>
+                )}
+              </Button>
+            </CardFooter>
+          </Card>
+        </form>
       </div>
     </div>
   )

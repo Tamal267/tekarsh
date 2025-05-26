@@ -1,5 +1,8 @@
 import JobDetailsClient from '@/components/job-details-client'
+import { Clock, MapPin } from 'lucide-react'
+import Link from 'next/link'
 import { Suspense } from 'react'
+import { getAllJobs, getJobById } from '../../../lib/job'
 
 // Mock data for job positions - in a real app, this would come from an API or CMS
 export const jobPositions = {
@@ -299,19 +302,62 @@ We are an equal opportunity employer and value diversity at our company. We do n
 }
 
 // Server component that gets the position parameter and passes it to the client component
-export default function JobDetailsPage({
+export default async function JobDetailsPage({
   params,
 }: {
   params: { position: string }
 }) {
-  const position = params.position
+  const job = await getJobById(params.position)
+  const allJobs = await getAllJobs()
+  let relatedJobs: any[] = []
+
+  for (let i = 0; i < allJobs.length; i++) {
+    if (allJobs[i].id !== job.id) {
+      relatedJobs.push(allJobs[i])
+    }
+    if (relatedJobs.length >= 2) break
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-1 bg-gray-50 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <Suspense fallback={<JobDetailsLoading />}>
-            <JobDetailsClient position={position} />
+            <JobDetailsClient job={job} />
+          </Suspense>
+
+          <Suspense fallback={<JobDetailsLoading />}>
+            {/* Related Positions */}
+            {relatedJobs && relatedJobs.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                  Related Positions
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {relatedJobs.map((relatedJob) => {
+                    return (
+                      <Link
+                        href={`/careers/${relatedJob.id}`}
+                        key={relatedJob.id}
+                        className="block bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                      >
+                        <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                          {relatedJob.title}
+                        </h3>
+                        <div className="flex items-center text-gray-600 text-sm mb-2">
+                          <MapPin className="h-3 w-3 mr-1" />
+                          <span>{relatedJob.location}</span>
+                          <span className="mx-2">•</span>
+                          <Clock className="h-3 w-3 mr-1" />
+                          <span>{relatedJob.worktype}</span>
+                        </div>
+                        <p className="text-gray-600 text-sm">View details →</p>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </Suspense>
         </div>
       </main>
