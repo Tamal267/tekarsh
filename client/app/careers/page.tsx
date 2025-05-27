@@ -122,7 +122,7 @@ export default async function CareersPage() {
                       <span className="text-sm">{job.location}</span>
                       <span className="mx-2">•</span>
                       <Clock className="h-4 w-4 mr-1" />
-                      <span className="text-sm">{job.workyype}</span>
+                      <span className="text-sm">{job.worktype}</span>
                     </div>
                     <p className="text-gray-600 my-4">{job.description}</p>
                     <div className="flex gap-3 mt-6">

@@ -10,12 +10,14 @@
     "dotenv": "^16.5.0",
     "hono": "^4.7.10",
     "node-fetch": "^3.3.2",
+    "nodemailer": "^7.0.3",
     "pdf-parse": "^1.1.1",
     "postgres": "^3.4.7",
     "pretty-json": "^0.1.1"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/nodemailer": "^6.4.17",
     "@types/pdf-parse": "^1.1.5"
   }
 }

@@ -114,14 +114,14 @@ export default function Home() {
         </div>
 
         <div className="flex md:flex-row flex-col items-center justify-between p-4">
-          <div className="max-w-lg flex flex-col gap-4 p-4">
+          <div className="max-w-lg flex flex-col flex-grow">
             <div className="overflow-hidden transition-transform duration-500 ease-in-out hover:scale-105 hover:rounded-2xl">
               <Image
                 src="/images/hero2.svg"
                 alt="Logo"
                 width={1000}
                 height={1000}
-                className="rounded-sm hover:shadow-lg filter transition-all duration-500 ease-in-out hover:contrast-125 w-96 h-auto"
+                className="rounded-sm hover:shadow-lg filter transition-all duration-500 ease-in-out hover:contrast-125 w-full h-auto"
                 priority
               />
             </div>
@@ -131,8 +131,8 @@ export default function Home() {
             id="why-choose-us"
           >
             <h1 className="text-2xl font-bold ">
-              <span className="text-red-500">Why</span> Choose Us
-              <span className="text-red-500">?</span>
+              <span className="text-green-500">Why</span> Choose Us
+              <span className="text-green-500">?</span>
             </h1>
             {whyChooseUs.map((item, index) => (
               <motion.div

@@ -1,4 +1,5 @@
 import sql from '../db'
+import { sendEmail } from '../sendEmail'
 
 export const getAllJobs = async (c: any) => {
   try {
@@ -59,6 +60,49 @@ export const jobApplicationForm = async (c: any) => {
     })
   } catch (error: any) {
     console.error('Error submitting job application:', error)
+    return c.json({ error: 'Something went wrong' }, 500)
+  }
+}
+
+export const getJobApplications = async (c: any) => {
+  try {
+    const result =
+      await sql`select ja.*, op.title, op.location, op.details, op.salary, op.description, op.worktype, op.department from job_applications ja
+join open_positions op on ja.job_id = op.id
+order by ja.created_at asc`
+    return c.json({ result })
+  } catch (error: any) {
+    console.error('Error fetching job applications:', error)
+    return c.json({ error: 'Something went wrong' }, 500)
+  }
+}
+
+
+
+export const filterJobApplications = async (c: any) => {
+  const { title, department, location, status } = await c.req.json()
+  console.log(
+    'title',
+    title,
+    'department',
+    department,
+    'location',
+    location,
+    'status',
+    status,
+  )
+  try {
+    const result =
+      await sql`select ja.*, op.title, op.location, op.details, op.salary, op.description, op.worktype, op.department from job_applications ja
+  join open_positions op on ja.job_id = op.id
+  where (lower(op.title) like lower(${title}) or lower(ja.name) like lower(${title}))
+  and lower(op.department) like lower(${department})
+  and lower(op.location) like lower(${location})
+  and lower(ja.status) like lower(${status})
+  order by ja.created_at asc`
+    return c.json({ result })
+  } catch (error: any) {
+    console.error('Error fetching job applications:', error)
     return c.json({ error: 'Something went wrong' }, 500)
   }
 }

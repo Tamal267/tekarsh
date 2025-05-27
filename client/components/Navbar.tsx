@@ -1,10 +1,4 @@
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import {
   Drawer,
   DrawerContent,
   DrawerDescription,
@@ -12,13 +6,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { ChevronDown, Menu } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from './ui/button'
@@ -28,17 +16,12 @@ const NavLinks = [
   { name: 'Why Choose Us', href: '/#why-choose-us' },
   { name: 'Services', href: '/#services' },
   { name: 'Careers', href: '/careers' },
-]
-
-const GivingBackLinks = [
-  { name: 'Education', href: '/' },
-  { name: 'Water', href: '/' },
-  { name: 'Health', href: '/' },
+  { name: 'Blogs', href: '/blogs' },
 ]
 
 export function Navbar() {
   return (
-    <div className="flex flex-row md:justify-around justify-between p-2 background-white shadow-md rounded-lg">
+    <div className="flex flex-row md:justify-around items-center justify-between p-2 background-white shadow-md">
       <div className="">
         <Image
           src="/images/tekarsh_logo.png"
@@ -60,34 +43,6 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="flex items-center gap-1 font-medium"
-              >
-                Giving Back <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-[200px]"
-            >
-              {GivingBackLinks.map((link) => (
-                <DropdownMenuItem
-                  key={link.name}
-                  asChild
-                >
-                  <Link
-                    href={link.href}
-                    className="w-full cursor-pointer"
-                  >
-                    {link.name}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </div>
       {/* Mobile Navigation */}
@@ -118,27 +73,6 @@ export function Navbar() {
                     {link.name}
                   </Link>
                 ))}
-                <Accordion
-                  type="single"
-                  collapsible
-                >
-                  <AccordionItem value="item-1">
-                    <AccordionTrigger className="text-gray-800">
-                      Giving Back
-                    </AccordionTrigger>
-                    <AccordionContent className="border-b border-gray-100">
-                      {GivingBackLinks.map((link) => (
-                        <Link
-                          key={link.name}
-                          href={link.href}
-                          className="text-gray-800 hover:text-green-600 transition-colors py-2 block"
-                        >
-                          {link.name}
-                        </Link>
-                      ))}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
               </nav>
             </div>
           </DrawerContent>
