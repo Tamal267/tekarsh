@@ -6,42 +6,50 @@ import { createClient } from '../utils/supabase/server'
 
 const server_url = process.env.SERVER_URL + '/'
 
-export const post = cache(
-  async (url: string, data: Record<string, unknown>) => {
-    url = server_url + url
+export const post = cache(async (url, data) => {
+  url = server_url + url
 
-    const response = await fetch(url, {
+  const response = await fetch(
+    url,
+    {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+    },
+    {
       cache: 'force-cache',
-      next: { revalidate: 30000 },
-    })
-    try {
-      const json = await response.json()
-      return json
-    } catch (error) {
-      console.error('JSON Error:', error)
-      return {
-        error: 'An error occurred',
-      }
+    },
+    { next: { revalidate: 30000 } },
+  )
+  try {
+    const json = await response.json()
+    return json
+  } catch (error) {
+    console.error('JSON Error:', error)
+    return {
+      error: 'An error occurred',
     }
-  },
-)
+  }
+})
 
-export const get = cache(async (url: string) => {
+export const get = cache(async (url) => {
   url = server_url + url
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
+  const response = await fetch(
+    url,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-    cache: 'force-cache',
-    next: { revalidate: 30000 },
-  })
+    {
+      cache: 'force-cache',
+    },
+    { next: { revalidate: 30000 } },
+  )
   try {
     const json = await response.json()
     return json
@@ -50,7 +58,7 @@ export const get = cache(async (url: string) => {
   }
 })
 
-export const get_with_token = cache(async (url: string) => {
+export const get_with_token = cache(async (url) => {
   const co = await cookies()
   const token = co.get('token')
   if (token === undefined)
@@ -58,15 +66,20 @@ export const get_with_token = cache(async (url: string) => {
       error: 'Unauthorized',
     }
 
-  const response = await fetch(server_url + url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token.value}`,
+  const response = await fetch(
+    server_url + url,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token.value}`,
+      },
     },
-    cache: 'force-cache',
-    next: { revalidate: 30000 },
-  })
+    {
+      cache: 'force-cache',
+    },
+    { next: { revalidate: 30000 } },
+  )
   try {
     const json = await response.json()
     return json
@@ -77,36 +90,39 @@ export const get_with_token = cache(async (url: string) => {
   }
 })
 
-export const post_with_token = cache(
-  async (url: string, data: Record<string, unknown>) => {
-    const co = await cookies()
-    const token = co.get('token')
-    if (token === undefined)
-      return {
-        error: 'Unauthorized',
-      }
+export const post_with_token = cache(async (url, data) => {
+  const co = await cookies()
+  const token = co.get('token')
+  if (token === undefined)
+    return {
+      error: 'Unauthorized',
+    }
 
-    const response = await fetch(server_url + url, {
+  const response = await fetch(
+    server_url + url,
+    {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token.value}`,
       },
       body: JSON.stringify(data),
+    },
+    {
       cache: 'force-cache',
-      next: { revalidate: 30000 },
-    })
-    try {
-      const json = await response.json()
-      return json
-    } catch (error) {
-      console.error('Error:', error)
-      return {
-        error: 'An error occurred',
-      }
+    },
+    { next: { revalidate: 30000 } },
+  )
+  try {
+    const json = await response.json()
+    return json
+  } catch (error) {
+    console.error('Error:', error)
+    return {
+      error: 'An error occurred',
     }
-  },
-)
+  }
+})
 
 export async function uploadImage(
   folder: string,

@@ -39,6 +39,83 @@ export const addPosition = async (c: any) => {
   }
 }
 
+export const deletePosition = async (c: any) => {
+  const { id } = await c.req.json()
+  console.log('id', id)
+  if (!id) {
+    return c.json({ error: 'ID is required' }, 400)
+  }
+  try {
+    const result =
+      await sql`delete from open_positions where id = ${id} returning *`
+    if (result.length === 0) {
+      return c.json({ error: 'Position not found' }, 404)
+    }
+    return c.json({
+      success: true,
+      message: 'Position deleted successfully',
+      result: result[0],
+    })
+  } catch (error: any) {
+    console.error('Error deleting position:', error)
+    return c.json({ error: 'Something went wrong' }, 500)
+  }
+}
+
+export const editPosition = async (c: any) => {
+  const {
+    id,
+    title,
+    location,
+    worktype,
+    department,
+    salary,
+    description,
+    details,
+  } = await c.req.json()
+
+  console.log(
+    'id',
+    id,
+    'title',
+    title,
+    'location',
+    location,
+    'worktype',
+    worktype,
+    'department',
+    department,
+    'salary',
+    salary,
+    'description',
+    description,
+    'details',
+    details,
+  )
+
+  if (!id) {
+    return c.json({ error: 'ID is required' }, 400)
+  }
+
+  try {
+    const result =
+      await sql`update open_positions set title = ${title}, location = ${location}, worktype = ${worktype}, department = ${department}, salary = ${salary}, description = ${description}, details = ${details} where id = ${id} returning *`
+
+    if (result.length === 0) {
+      return c.json({ error: 'Position not found' }, 404)
+    }
+
+    return c.json({
+      success: true,
+      message: 'Position updated successfully',
+      result: result[0],
+    })
+  } catch (error: any) {
+    console.error('Error updating position:', error)
+    return c.json({ error: 'Something went wrong' }, 500)
+  }
+}
+
 export const changeStatus = async (c: any) => {
   const { id, status } = await c.req.json()
   console.log('id', id, 'status', status)

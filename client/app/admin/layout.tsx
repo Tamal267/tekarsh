@@ -58,7 +58,7 @@ export default async function AdminLayout({
   const isLogin = cookieStore.get('token')?.value === undefined ? false : true
   return (
     <div>
-      <header className="bg-gray-50 flex flex-col md:flex-row max-md:items-start items-center justify-between gap-2 text-sm shadow-sm p-4 md:px-12">
+      <header className="bg-gray-50 md:h-4 flex flex-col md:flex-row max-md:items-start items-center justify-between gap-2 text-sm shadow-sm p-4 md:px-12">
         <div className="flex flex-col md:flex-row items-center max-md:items-start gap-2">
           {isLogin &&
             navLinks.map((link, index) => (
@@ -106,7 +106,7 @@ export default async function AdminLayout({
 
         {isLogin && <Logout />}
       </header>
-      <div className="min-h-screen bg-gray-50 p-6">{children}</div>
+      <div className="min-h-screen bg-gray-50">{children}</div>
     </div>
   )
 }

@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Calendar, Mail, MapPin, Phone } from 'lucide-react'
+import { Brain, Calendar, Mail, MapPin, Phone } from 'lucide-react'
 import { Suspense } from 'react'
 import { AIAnalysisModal } from '../../../components/ai-analysis-modal'
 import ApplicationFilter from '../../../components/applications-filter'
@@ -142,7 +142,15 @@ export default async function ApplicationsPage({ searchParams }) {
                         <TableCell>
                           <div className="flex gap-1">
                             <CVModal application={application} />
-                            <AIAnalysisModal application={application} />
+                            <Suspense
+                              fallback={
+                                <div className="border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg p-2 transition-colors flex items-center">
+                                  <Brain className="h-3 w-3" />
+                                </div>
+                              }
+                            >
+                              <AIAnalysisModal application={application} />
+                            </Suspense>
                             <Invitation application={application} />
                           </div>
                         </TableCell>

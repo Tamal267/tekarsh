@@ -8,9 +8,11 @@ import {
 import { motion } from 'framer-motion'
 import { CheckCircle, Code } from 'lucide-react'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { ClientReviews } from '../components/ClientReviews'
 import { OurServices } from '../components/OurServices'
 import { TextGen } from '../components/TextGen'
+import Loading from './loading'
 
 const whyChooseUs = [
   {
@@ -74,6 +76,22 @@ const tierInfo = [
 ]
 
 export default function Home() {
+  const [bgLoaded, setBgLoaded] = useState(false)
+
+  useEffect(() => {
+    const img = new window.Image()
+    img.src = '/images/zigzag.svg'
+    img.onload = () => setBgLoaded(true)
+  }, [])
+
+  if (!bgLoaded) {
+    return (
+      <div className="flex w-full items-center justify-center h-screen">
+        <Loading />
+      </div>
+    )
+  }
+
   return (
     <div className="flex w-full  items-center justify-center bg-gradient-to-b from-white to-green-50 overflow-x-hidden">
       <div className="flex flex-col gap-12 m-0 p-0">

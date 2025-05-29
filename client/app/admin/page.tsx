@@ -15,7 +15,7 @@ import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getAllBlogs } from '../../lib/blog'
-import { getAllJobs } from '../../lib/job'
+import { getAllJobs, getJobApplications } from '../../lib/job'
 
 // Mock data for dashboard
 const dashboardStats = {
@@ -160,14 +160,14 @@ export default async function AdminDashboard() {
       reviewed++
     }
   }
-
+  const applications = await getJobApplications('', '', '', '')
   const allBlogs = await getAllBlogs('', '')
 
   if (!isLogin) {
     redirect('/admin/login')
   }
   return (
-    <div className="p-12 space-y-6">
+    <div className="p-12 space-y-6 min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -282,7 +282,7 @@ export default async function AdminDashboard() {
                     {allBlogs.length}
                   </p>
                   <Badge className="ml-2 bg-green-100 text-cyan-800">
-                    {dashboardStats.publishedPosts} published
+                    {allBlogs.length} published
                   </Badge>
                 </div>
               </div>
@@ -342,21 +342,21 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {allJobs.slice(0, 5).map((application) => (
+              {applications.slice(0, 5).map((application) => (
                 <div
                   key={application.id}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                      {application.title
+                      {application.name
                         .split(' ')
                         .map((n) => n[0])
                         .join('')}
                     </div>
                     <div className="ml-3">
                       <p className="font-medium text-gray-900">
-                        {application.title}
+                        {application.name}
                       </p>
                       <p className="text-sm text-gray-600">
                         {application.department}
@@ -365,7 +365,8 @@ export default async function AdminDashboard() {
                   </div>
                   <div className="text-right">
                     <Badge className={getStatusColor(application.status)}>
-                      {application.salary}
+                      {application.status.charAt(0).toUpperCase() +
+                        application.status.slice(1)}
                     </Badge>
                     <p className="text-xs text-gray-500 mt-1 flex items-center p-2">
                       <Calendar className="h-3 w-3 mr-1" />

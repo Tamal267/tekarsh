@@ -121,7 +121,7 @@ export default async function BlogPostPage({
   params: { id: string }
 }) {
   const post = await getBlogById((await params).id)
-  const allPosts = await getAllBlogs()
+  const allPosts = await getAllBlogs('', '')
   let relatedPosts = []
 
   for (let i = 0; i < allPosts.length; i++) {

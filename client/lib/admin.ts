@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { post, post_with_token, uploadImage } from './action'
@@ -20,6 +21,46 @@ export async function addPosition(prevState: unknown, formData: unknown) {
   return {
     success: true,
     message: `Position ${raw.title} added successfully`,
+  }
+}
+
+export async function deletePosition(prevState: unknown, formData: unknown) {
+  console.log('hello')
+  const raw = Object.fromEntries(formData as FormData)
+  console.log('raw', raw)
+
+  const response = await post_with_token('admin/delete_position', raw)
+  if (response.error) {
+    return {
+      success: false,
+      message: response.error,
+    }
+  }
+
+  revalidatePath('/careers')
+
+  return {
+    success: true,
+    message: `Position ${raw.title} deleted successfully`,
+  }
+}
+
+export async function editPosition(prevState: unknown, formData: unknown) {
+  console.log('hello')
+  const raw = Object.fromEntries(formData as FormData)
+  console.log('raw', raw)
+
+  const response = await post_with_token('admin/edit_position', raw)
+  if (response.error) {
+    return {
+      success: false,
+      message: response.error,
+    }
+  }
+
+  return {
+    success: true,
+    message: `Position ${raw.title} edited successfully`,
   }
 }
 

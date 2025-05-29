@@ -10,6 +10,7 @@ import {
 import {
   Clock,
   DollarSign,
+  Edit2,
   GraduationCap,
   Laptop,
   MapPin,
@@ -17,11 +18,15 @@ import {
   Trophy,
   Users,
 } from 'lucide-react'
+import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
+import DeletePosition from '../../components/delete-positions'
 import { getAllJobs } from '../../lib/job'
 
 export default async function CareersPage() {
+  const cookieStore = await cookies()
+  const isLogin = cookieStore.get('token')?.value === undefined ? false : true
   const openPositions = await getAllJobs()
   return (
     <div className="min-h-screen flex flex-col">
@@ -138,6 +143,17 @@ export default async function CareersPage() {
                           Apply Now
                         </Button>
                       </Link>
+                      {isLogin && <DeletePosition position={job} />}
+                      {isLogin && (
+                        <Link
+                          href={`/admin/position/edit/${job.id}`}
+                          className="text-blue-600 hover:text-blue-700"
+                        >
+                          <div className="border border-gray-300 bg-green-50 text-green-500 hover:bg-green-100 hover:green-red-700 rounded-lg p-2 transition-colors">
+                            <Edit2 className="h-5 w-5" />
+                          </div>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 ))

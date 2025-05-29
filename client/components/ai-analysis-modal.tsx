@@ -69,7 +69,8 @@ export async function AIAnalysisModal({ application }: AIAnalysisModalProps) {
             </div>
             <div>
               <div className="text-xl font-bold">
-                AI Analysis - {analysis['Full Name']}
+                AI Analysis -{' '}
+                {analysis['Full Name'] ? analysis['Full Name'] : 'N/A'}
               </div>
               <div className="text-sm text-gray-500 font-normal">
                 Comprehensive candidate assessment

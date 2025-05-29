@@ -7,6 +7,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer'
 import { Menu } from 'lucide-react'
+import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from './ui/button'
@@ -19,7 +20,9 @@ const NavLinks = [
   { name: 'Blogs', href: '/blogs' },
 ]
 
-export function Navbar() {
+export async function Navbar() {
+  const cookieStore = await cookies()
+  const isLogin = cookieStore.get('token')?.value === undefined ? false : true
   return (
     <div className="flex flex-row md:justify-around items-center justify-between p-2 background-white shadow-md">
       <div className="">
@@ -43,6 +46,14 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
+          {isLogin && (
+            <Link
+              href="/admin"
+              className="text-gray-700 hover:text-green-600 transition-colors font-medium"
+            >
+              Admin Dashboard
+            </Link>
+          )}
         </div>
       </div>
       {/* Mobile Navigation */}
@@ -73,6 +84,14 @@ export function Navbar() {
                     {link.name}
                   </Link>
                 ))}
+                {isLogin && (
+                  <Link
+                    href="/admin"
+                    className="text-gray-800 hover:text-green-600 transition-colors py-2 border-b border-gray-100"
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
               </nav>
             </div>
           </DrawerContent>

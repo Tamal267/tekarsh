@@ -6,6 +6,8 @@ import {
   addPosition,
   changeStatus,
   createBlogPost,
+  deletePosition,
+  editPosition,
   sendInvitation,
 } from './controllers/adminController'
 import { cvAnalyzer } from './controllers/apiController'
@@ -32,6 +34,8 @@ app.use(
 )
 
 app.use('/admin/add_position', addPosition)
+app.use('/admin/delete_position', deletePosition)
+app.use('/admin/edit_position', editPosition)
 app.post('/admin/change_status', changeStatus)
 app.post('/admin/send_invitation', sendInvitation)
 app.post('/admin/add_blog', createBlogPost)

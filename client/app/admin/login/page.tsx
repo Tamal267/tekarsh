@@ -27,7 +27,7 @@ export default function AdminLogin() {
   const [state, formAction, pending] = useActionState(adminLogin, initialState)
 
   return (
-    <div className="bg-gradient-to-br from-green-50 to-white flex items-center justify-center p-12">
+    <div className="bg-gradient-to-br min-h-screen from-green-50 to-white flex items-center justify-center p-12">
       <div className="w-full max-w-md">
         {/* Logo and Header */}
         <div className="text-center mb-8">

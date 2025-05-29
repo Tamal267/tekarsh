@@ -307,7 +307,7 @@ export default async function JobDetailsPage({
 }: {
   params: { position: string }
 }) {
-  const job = await getJobById(params.position)
+  const job = await getJobById((await params).position)
   const allJobs = await getAllJobs()
   let relatedJobs: any[] = []
 

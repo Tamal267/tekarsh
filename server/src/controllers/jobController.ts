@@ -1,5 +1,4 @@
 import sql from '../db'
-import { sendEmail } from '../sendEmail'
 
 export const getAllJobs = async (c: any) => {
   try {
@@ -69,15 +68,13 @@ export const getJobApplications = async (c: any) => {
     const result =
       await sql`select ja.*, op.title, op.location, op.details, op.salary, op.description, op.worktype, op.department from job_applications ja
 join open_positions op on ja.job_id = op.id
-order by ja.created_at asc`
+order by ja.created_at desc`
     return c.json({ result })
   } catch (error: any) {
     console.error('Error fetching job applications:', error)
     return c.json({ error: 'Something went wrong' }, 500)
   }
 }
-
-
 
 export const filterJobApplications = async (c: any) => {
   const { title, department, location, status } = await c.req.json()
@@ -99,7 +96,7 @@ export const filterJobApplications = async (c: any) => {
   and lower(op.department) like lower(${department})
   and lower(op.location) like lower(${location})
   and lower(ja.status) like lower(${status})
-  order by ja.created_at asc`
+  order by ja.created_at desc`
     return c.json({ result })
   } catch (error: any) {
     console.error('Error fetching job applications:', error)
